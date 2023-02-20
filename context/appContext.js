@@ -1,4 +1,5 @@
 import React, { useReducer, useState, useContext } from "react";
+import axios from "axios";
 
 import reducer from "./reducer";
 
@@ -11,10 +12,9 @@ import {
   UPLOAD_ERROR,
   HANDLE_CHANGE,
 } from "./actions";
-import axios from "axios";
 
 const initialState = {
-  isLoading: true,
+  isLoading: false,
   name: "",
   price: "",
   image: "",
@@ -32,17 +32,20 @@ const AppProvider = ({ children }) => {
   const createProduct = async (product) => {
     dispatch({ type: CREATE_PRODUCT_BEGIN });
     try {
-      await axios.post("/api/v1/products", product);
+      const response = await axios.post("/api/v1/products", product);
+      console.log(product);
       dispatch({ type: CREATE_PRODUCT_SUCCESS });
     } catch (error) {
       console.log(error.response);
       dispatch({ type: CREATE_PRODUCT_ERROR });
     }
   };
-  const uploadImage = async (formData) => {
+
+  const uploadImage = async (photo) => {
     dispatch({ type: UPLOAD_BEGIN });
     try {
-      await axios.post("api/v1/products/uploads", formData);
+      const response = await axios.post("/api/v1/products/uploads", photo);
+      console.log(photo);
       dispatch({ type: UPLOAD_SUCCESS });
     } catch (error) {
       console.log(error.response);
@@ -52,7 +55,7 @@ const AppProvider = ({ children }) => {
 
   return (
     <AppContext.Provider
-      value={{ ...state, createProduct, uploadImage, handleChange }}
+      value={{ ...state, createProduct, handleChange, uploadImage }}
     >
       {children}
     </AppContext.Provider>

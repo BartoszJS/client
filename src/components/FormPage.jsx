@@ -2,8 +2,11 @@ import React, { useEffect, useState } from "react";
 import { initialState, useAppContext } from "../context/appContext";
 
 const FormPage = () => {
-  const { name, price, image, createProduct } = useAppContext();
+  const { createProduct, handleChange, uploadImage } = useAppContext();
   const [values, setValues] = useState(initialState);
+  const [name, setName] = useState("");
+  const [price, setPrice] = useState("");
+  const [image, setImage] = useState("");
 
   // const fetchData = async () => {
   //   try {
@@ -20,16 +23,37 @@ const FormPage = () => {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    console.log(e.target);
+    const product = { name, price, image };
+    console.log(product);
+    createProduct(product);
   };
 
-  const handleChange = (e) => {
-    setValues({ ...values, [e.target.name]: e.target.value });
+  // const handleChange = (e) => {
+  //   setValues({ ...values, [e.target.name]: e.target.value });
+  // };
+
+  const handleInputName = (e) => {
+    const name = e.target.name;
+
+    const value = e.target.value;
+    setName(e.target.value);
+    handleChange({ name, value });
+  };
+  const handleInputPrice = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+    setPrice(e.target.value);
+    handleChange({ name, value });
+    console.log(name + " " + price + " " + image);
   };
 
   const handlePhoto = (e) => {
-    setValues({ ...values, image: e.target.files[0].name });
-    console.log(values);
+    setImage(e.target.files[0].name);
+    const imageFile = e.target.files[0];
+    const formData = new FormData();
+    formData.append("image", imageFile);
+    console.log(formData);
+    uploadImage(formData);
   };
 
   return (
@@ -40,19 +64,20 @@ const FormPage = () => {
       >
         <input
           className='border'
-          onChange={handleChange}
+          onChange={handleInputName}
           type='text'
           value={name}
           name='name'
         />
         <input
-          className='border border-black'
-          onChange={handleChange}
+          className='border'
+          onChange={handleInputPrice}
           type='text'
           value={price}
           name='price'
         />
-        <input onChange={handlePhoto} type='file' value={image} name='image' />
+        <input onChange={handlePhoto} type='file' />
+
         <button className='bg-red-300' type='submit'>
           YAS
         </button>
